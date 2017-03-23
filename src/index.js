@@ -6,6 +6,7 @@ export ShareButton from './ShareButton';
 export Page from './Page';
 export Login from './Login';
 export LoginButton from './LoginButton';
+export Send from './Send';
 export EmbeddedPost from './EmbeddedPost';
 export Comments from './Comments';
 export CommentsCount from './CommentsCount';
