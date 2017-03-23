@@ -4,7 +4,7 @@ import getCurrentHref from './utils/getCurrentHref';
 import LikeSize from './constants/LikeSize';
 import ColorScheme from './constants/ColorScheme';
 
-export default class Like extends Parser {
+export default class Send extends Parser {
   static propTypes = {
     ...Parser.propTypes,
     referral: PropTypes.string,
