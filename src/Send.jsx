@@ -1,38 +1,24 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Parser from './Parser';
 import getCurrentHref from './utils/getCurrentHref';
 import LikeSize from './constants/LikeSize';
 import ColorScheme from './constants/ColorScheme';
 
-export default class Send extends Parser {
-  static propTypes = {
-    ...Parser.propTypes,
-    referral: PropTypes.string,
-    href: PropTypes.string,
-    colorScheme: PropTypes.string.isRequired,
-    children: PropTypes.node,
-    size: PropTypes.string,
-    kidDirectedSite: PropTypes.bool.isRequired,
-  };
+export default function Send(props) {
+  const {
+    className,
+    href = getCurrentHref(),
+    colorScheme,
+    children,
+    size,
+    kidDirectedSite,
+    referral,
+    onParse,
+  } = props;
 
-  static defaultProps = {
-    colorScheme: ColorScheme.LIGHT,
-    share: false,
-    size: LikeSize.SMALL,
-    kidDirectedSite: false,
-  };
-
-  renderComponent() {
-    const {
-      href = getCurrentHref(),
-      colorScheme,
-      children,
-      size,
-      kidDirectedSite,
-      referral,
-    } = this.props;
-
-    return (
+  return (
+    <Parser className={className} onParse={onParse}>
       <div
         className="fb-send"
         data-ref={referral}
@@ -43,6 +29,28 @@ export default class Send extends Parser {
       >
         {children}
       </div>
-    );
-  }
+    </Parser>
+  );
 }
+
+Send.propTypes = {
+  className: PropTypes.string,
+  referral: PropTypes.string,
+  href: PropTypes.string,
+  colorScheme: PropTypes.string.isRequired,
+  children: PropTypes.node,
+  size: PropTypes.string,
+  kidDirectedSite: PropTypes.bool.isRequired,
+  onParse: PropTypes.func,
+};
+
+Send.defaultProps = {
+  colorScheme: ColorScheme.LIGHT,
+  size: LikeSize.SMALL,
+  kidDirectedSite: false,
+  children: undefined,
+  className: undefined,
+  href: undefined,
+  referral: undefined,
+  onParse: undefined,
+};

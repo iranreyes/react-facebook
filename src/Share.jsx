@@ -1,49 +1,44 @@
-import React, { Component, PropTypes } from 'react';
-import qs from 'qs';
-import { autobind } from 'core-decorators';
-import Provider from './FacebookProvider';
+import PropTypes from 'prop-types';
 import getCurrentHref from './utils/getCurrentHref';
+import clearUndefinedProperties from './utils/clearUndefinedProperties';
+import Process from './Process';
 
-export default class Share extends Component {
-  static contextTypes = {
-    ...Provider.childContextTypes,
-  };
-
+export default class Share extends Process {
   static propTypes = {
+    ...Process.propTypes,
     href: PropTypes.string,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-    children: PropTypes.node,
     hashtag: PropTypes.string,
     quote: PropTypes.string,
     mobileIframe: PropTypes.bool,
-    display: PropTypes.string.isRequired,
+    display: PropTypes.string,
     appId: PropTypes.string,
     redirectURI: PropTypes.string,
   };
 
   static defaultProps = {
-    display: 'popup',
-    width: 626,
-    height: 436,
-    buttonClassName: 'btn btn-lg',
-    iconClassName: 'fa fa-facebook pull-left',
-    icon: true,
+    ...Process.defaultProps,
+    href: undefined,
+    hashtag: undefined,
+    quote: undefined,
+    mobileIframe: undefined,
+    display: undefined,
+    appId: undefined,
+    redirectURI: undefined,
   };
 
-  getSharerHref() {
-    const { facebook } = this.context;
+  async process(facebook) {
     const {
       href = getCurrentHref(),
       display,
-      appId = facebook.props.appID,
+      appId = facebook.getAppId(),
       hashtag,
       redirectURI,
       quote,
       mobileIframe,
     } = this.props;
 
-    return '//www.facebook.com/dialog/share?' + qs.stringify({
+    return facebook.ui(clearUndefinedProperties({
+      method: 'share',
       href,
       display,
       app_id: appId,
@@ -51,38 +46,6 @@ export default class Share extends Component {
       redirect_uri: redirectURI,
       quote,
       mobile_iframe: mobileIframe,
-    });
-  }
-
-  @autobind
-  onClick(evn) {
-    evn.preventDefault();
-    evn.stopPropagation();
-
-    const href = this.getSharerHref();
-    const { width, height } = this.props;
-
-    const halfWidth = Math.floor(width / 2);
-    const halfHeight = Math.floor(height / 2);
-
-    const left = Math.floor((window.innerWidth / 2) - halfWidth);
-    const top = Math.floor((window.innerHeight / 2) - halfHeight);
-
-    const params = `status=0, width=${width}, height=${height}, top=${top}, left=${left}, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0`;
-
-    window.open(href, 'sharer', params);
-
-    const { children } = this.props;
-    if (children && children.props && children.props.onClick) {
-      children.props.onClick(evn);
-    }
-  }
-
-  render() {
-    const { children } = this.props;
-
-    return (
-      React.cloneElement(children, { onClick: this.onClick })
-    );
+    }));
   }
 }

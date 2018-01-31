@@ -1,28 +1,19 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Parser from './Parser';
 
-export default class EmbeddedPost extends Parser {
-  static propTypes = {
-    href: PropTypes.string.isRequired,
-    width: PropTypes.oneOfType([
-      PropTypes.number.isRequired,
-      PropTypes.string.isRequired,
-    ]),
-    showText: PropTypes.bool.isRequired,
-    children: PropTypes.node,
-    className: PropTypes.string,
-  };
+export default function EmbeddedPost(props) {
+  const {
+    className,
+    href,
+    width,
+    showText,
+    children,
+    onParse,
+  } = props;
 
-  static defaultProps = {
-    href: 'http://www.facebook.com',
-    width: 500, // 350 - 750
-    showText: false,
-  };
-
-  renderComponent() {
-    const { href, width, showText, children } = this.props;
-
-    return (
+  return (
+    <Parser className={className} onParse={onParse}>
       <div
         className="fb-post"
         data-href={href}
@@ -31,6 +22,27 @@ export default class EmbeddedPost extends Parser {
       >
         {children}
       </div>
-    );
-  }
+    </Parser>
+  );
 }
+
+EmbeddedPost.propTypes = {
+  className: PropTypes.string,
+  href: PropTypes.string.isRequired,
+  width: PropTypes.oneOfType([
+    PropTypes.number.isRequired,
+    PropTypes.string.isRequired,
+  ]),
+  showText: PropTypes.bool.isRequired,
+  children: PropTypes.node,
+  onParse: PropTypes.func,
+};
+
+EmbeddedPost.defaultProps = {
+  href: 'http://www.facebook.com',
+  width: 500, // 350 - 750
+  showText: false,
+  children: undefined,
+  className: undefined,
+  onParse: undefined,
+};

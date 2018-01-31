@@ -1,124 +1,52 @@
-import React, { Component, PropTypes, cloneElement } from 'react';
-import { LoginStatus } from './Facebook';
-import FacebookProvider from './FacebookProvider';
+import PropTypes from 'prop-types';
+import Process from './Process';
 
-export default class Login extends Component {
+export default class Login extends Process {
   static propTypes = {
+    ...Process.propTypes,
     scope: PropTypes.string.isRequired,
-    fields: PropTypes.array.isRequired,
-    onResponse: PropTypes.func.isRequired,
-    onReady: PropTypes.func,
-    onWorking: PropTypes.func,
-    children: PropTypes.node.isRequired,
+    fields: PropTypes.arrayOf(PropTypes.string),
     returnScopes: PropTypes.bool,
     rerequest: PropTypes.bool,
-  };
-
-  static contextTypes = {
-    ...FacebookProvider.childContextTypes,
+    reauthorize: PropTypes.bool,
   };
 
   static defaultProps = {
+    ...Process.defaultProps,
     scope: '',
     fields: ['id', 'first_name', 'last_name', 'middle_name',
       'name', 'email', 'locale', 'gender', 'timezone', 'verified', 'link'],
     returnScopes: false,
     rerequest: false,
+    reauthorize: false,
   };
 
-  constructor(props, context) {
-    super(props, context);
-
-    this.state = {};
-  }
-
-  componentDidMount() {
-    this.context.facebook.whenReady(this.onReady);
-  }
-
-  componentWillUnmount() {
-    this.context.facebook.dismiss(this.onReady);
-  }
-
-  onReady = (err, facebook) => {
-    if (err) {
-      this.props.onResponse(err);
-      return;
-    }
-
-    this.setState({ facebook });
-
-    if (this.props.onReady) {
-      this.props.onReady();
-    }
-  }
-
-  onClick = (evn) => {
-    evn.stopPropagation();
-    evn.preventDefault();
-
-    const isWorking = this.isWorking();
-    if (isWorking) {
-      return;
-    }
-
-    this.setWorking(true);
-
-    const { scope, fields, onResponse, returnScopes, rerequest } = this.props;
-    const facebook = this.state.facebook;
+  async process(facebook) {
+    const { scope, fields, returnScopes, rerequest, reauthorize } = this.props;
     const loginQpts = { scope };
+    const authType = [];
 
     if (returnScopes) {
       loginQpts.return_scopes = true;
     }
 
     if (rerequest) {
-      loginQpts.auth_type = 'rerequest';
+      authType.push('rerequest');
     }
 
-    facebook.login(loginQpts, (err, loginStatus) => {
-      if (err) {
-        this.setWorking(false);
-        onResponse(err);
-        return;
-      }
-
-      if (loginStatus !== LoginStatus.AUTHORIZED) {
-        this.setWorking(false);
-        onResponse(new Error('Unauthorized user'));
-        return;
-      }
-
-      facebook.getTokenDetailWithProfile({ fields }, (err2, data) => {
-        this.setWorking(false);
-
-        if (err2) {
-          onResponse(err2);
-          return;
-        }
-
-        onResponse(null, data);
-      });
-    });
-  };
-
-  setWorking(working) {
-    this.setState({ working });
-
-    if (this.props.onWorking) {
-      this.props.onWorking(working);
+    if (reauthorize) {
+      authType.push('reauthenticate');
     }
-  }
 
-  isWorking() {
-    const { working, facebook } = this.state;
+    if (authType.length) {
+      loginQpts.auth_type = authType.join(',');
+    }
 
-    return working || !facebook;
-  }
+    const response = await facebook.login(loginQpts);
+    if (response.status !== 'connected') {
+      throw new Error('Unauthorized user');
+    }
 
-  render() {
-    const { children } = this.props;
-
-    return cloneElement(children, { onClick: this.onClick });
+    return facebook.getTokenDetailWithProfile({ fields });
   }
 }

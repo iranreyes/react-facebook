@@ -1,75 +1,41 @@
-import React, { Component, PropTypes } from 'react';
-import { autobind } from 'core-decorators';
-import qs from 'qs';
-
-import Provider from './FacebookProvider';
+import PropTypes from 'prop-types';
 import getCurrentHref from './utils/getCurrentHref';
+import clearUndefinedProperties from './utils/clearUndefinedProperties';
+import Process from './Process';
 
-export default class Feed extends Component {
-  static contextTypes = {
-    ...Provider.childContextTypes,
-  };
-
+export default class Feed extends Process {
   static propTypes = {
-    children: PropTypes.node,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    ...Process.propTypes,
     appId: PropTypes.string,
     redirectURI: PropTypes.string,
-    display: PropTypes.string.isRequired,
+    display: PropTypes.string,
     from: PropTypes.string,
     to: PropTypes.string,
     link: PropTypes.string,
-    picture: PropTypes.string,
     source: PropTypes.string,
-    name: PropTypes.string,
-    caption: PropTypes.string,
-    description: PropTypes.string,
+    picture: PropTypes.string, // deprecated
+    name: PropTypes.string, // deprecated
+    caption: PropTypes.string, // deprecated
+    description: PropTypes.string, // deprecated
     ref: PropTypes.string,
   };
 
   static defaultProps = {
-    display: 'popup',
-    width: 626,
-    height: 436,
-    buttonClassName: 'btn btn-lg',
-    iconClassName: 'fa fa-facebook pull-left',
-    icon: true,
+    ...Process.defaultProps,
+    link: undefined,
+    display: undefined,
+    appId: undefined,
+    redirectURI: undefined,
   };
 
-  @autobind
-  onClick(evn) {
-    evn.preventDefault();
-    evn.stopPropagation();
-
-    const href = this.getSharerHref();
-    const { width, height } = this.props;
-
-    const halfWidth = Math.floor(width / 2);
-    const halfHeight = Math.floor(height / 2);
-
-    const left = Math.floor((window.innerWidth / 2) - halfWidth);
-    const top = Math.floor((window.innerHeight / 2) - halfHeight);
-
-    const params = `status=0, width=${width}, height=${height}, top=${top}, left=${left}, toolbar=0, location=0, menubar=0, directories=0, scrollbars=0`;
-
-    window.open(href, 'sharer', params);
-
-    const { children } = this.props;
-    if (children && children.props && children.props.onClick) {
-      children.props.onClick(evn);
-    }
-  }
-
-  getSharerHref() {
-    const { facebook } = this.context;
+  async process(facebook) {
     const {
-      appId = facebook.props.appID,
-      redirectURI,
+      link = getCurrentHref(),
       display,
+      appId = facebook.getAppId(),
+      redirectURI,
       from,
       to,
-      link = getCurrentHref(),
       picture,
       source,
       name,
@@ -78,29 +44,20 @@ export default class Feed extends Component {
       ref,
     } = this.props;
 
-    const query = qs.stringify({
+    return facebook.ui(clearUndefinedProperties({
+      method: 'feed',
+      link,
+      display,
       app_id: appId,
       redirect_uri: redirectURI,
-      display,
       from,
       to,
-      link,
       picture,
       source,
       name,
       caption,
       description,
       ref,
-    });
-
-    return `//www.facebook.com/dialog/feed?${query}`;
-  }
-
-  render() {
-    const { children } = this.props;
-
-    return (
-      React.cloneElement(children, { onClick: this.onClick })
-    );
+    }));
   }
 }

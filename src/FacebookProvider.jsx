@@ -1,21 +1,21 @@
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import FB from './Facebook';
 
 let facebookInstance = null;
 
 export default class Facebook extends Component {
   static propTypes = {
+    appId: PropTypes.string.isRequired,
     domain: PropTypes.string,
-    appID: PropTypes.string.isRequired,
-    version: PropTypes.string.isRequired,
-    cookie: PropTypes.bool.isRequired,
-    status: PropTypes.bool.isRequired,
-    xfbml: PropTypes.bool.isRequired,
-    language: PropTypes.string.isRequired,
-    frictionlessRequests: PropTypes.bool.isRequired,
+    version: PropTypes.string,
+    cookie: PropTypes.bool,
+    status: PropTypes.bool,
+    xfbml: PropTypes.bool,
+    language: PropTypes.string,
+    frictionlessRequests: PropTypes.bool,
     children: PropTypes.node,
-    init: PropTypes.bool.isRequired,
-    onReady: PropTypes.func,
+    wait: PropTypes.bool,
   };
 
   static childContextTypes = {
@@ -23,13 +23,15 @@ export default class Facebook extends Component {
   };
 
   static defaultProps = {
-    version: 'v2.5', // or v2.0, v2.1, v2.2, v2.3
+    version: 'v2.9',
     cookie: false,
     status: false,
     xfbml: false,
     language: 'en_US',
     frictionlessRequests: false,
-    init: false,
+    domain: 'connect.facebook.net',
+    children: undefined,
+    wait: false,
   };
 
   getChildContext() {
@@ -38,43 +40,38 @@ export default class Facebook extends Component {
     };
   }
 
-  whenReady(callback) {
-    const {
-      domain,
-      version,
-      appID,
-      cookie,
-      status,
-      xfbml,
-      language,
-      frictionlessRequests,
-      init,
-    } = this.props;
-
+  async init() {
     if (!this.facebook) {
-      this.facebook = facebookInstance = facebookInstance || new FB({
+      const {
         domain,
-        appID,
+        version,
+        appId,
+        cookie,
+        status,
+        xfbml,
+        language,
+        frictionlessRequests,
+        wait,
+      } = this.props;
+
+      this.facebook = facebookInstance || new FB({
+        domain,
+        appId,
         version,
         cookie,
         status,
         xfbml,
         language,
         frictionlessRequests,
-        init,
+        wait,
       });
+
+      facebookInstance = this.facebook;
     }
 
-    this.facebook.whenReady(callback);
-    if (this.props.onReady) {
-      this.facebook.whenReady(this.props.onReady);
-    }
-  }
+    await this.facebook.init();
 
-  dismiss(callback) {
-    if (this.facebook) {
-      this.facebook.dismiss(callback);
-    }
+    return this.facebook;
   }
 
   render() {

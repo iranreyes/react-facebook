@@ -1,61 +1,30 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Parser from './Parser';
 import getCurrentHref from './utils/getCurrentHref';
 
-export default class Page extends Parser {
-  static propTypes = {
-    ...Parser.propTypes,
-    href: PropTypes.string.isRequired,
-    tabs: PropTypes.string,
-    hideCover: PropTypes.bool,
-    height: PropTypes.oneOfType([
-      PropTypes.number.isRequired,
-      PropTypes.string.isRequired,
-    ]),
-    width: PropTypes.oneOfType([
-      PropTypes.number.isRequired,
-      PropTypes.string.isRequired,
-    ]),
-    showFacepile: PropTypes.bool,
-    hideCTA: PropTypes.bool,
-    smallHeader: PropTypes.bool,
-    adaptContainerWidth: PropTypes.bool,
-    children: PropTypes.node,
-  };
+export default function Page(props) {
+  const {
+    className,
+    style,
+    href = getCurrentHref(),
+    tabs,
+    hideCover,
+    width,
+    height,
+    showFacepile,
+    hideCTA,
+    smallHeader,
+    adaptContainerWidth,
+    children,
+    onParse,
+  } = props;
 
-  static defaultProps = {
-    width: 340,
-    height: 500,
-    tabs: 'timeline',
-    hideCover: false,
-    showFacepile: true,
-    hideCTA: false,
-    smallHeader: false,
-    adaptContainerWidth: true,
-  };
-
-  renderComponent() {
-    const {
-      style,
-      href = getCurrentHref(),
-      tabs,
-      hideCover,
-      width,
-      height,
-      showFacepile,
-      hideCTA,
-      smallHeader,
-      adaptContainerWidth,
-      children,
-    } = this.props;
-
-    const appID = this.context.facebook && this.context.facebook.props.appID;
-
-    return (
+  return (
+    <Parser className={className} onParse={onParse}>
       <div
         className="fb-page"
         style={style}
-        data-appID={appID}
         data-tabs={tabs}
         data-hide-cover={hideCover}
         data-show-facepile={showFacepile}
@@ -68,6 +37,41 @@ export default class Page extends Parser {
       >
         {children}
       </div>
-    );
-  }
+    </Parser>
+  );
 }
+
+Page.propTypes = {
+  className: PropTypes.string,
+  href: PropTypes.string.isRequired,
+  tabs: PropTypes.string,
+  hideCover: PropTypes.bool,
+  height: PropTypes.oneOfType([
+    PropTypes.number.isRequired,
+    PropTypes.string.isRequired,
+  ]),
+  width: PropTypes.oneOfType([
+    PropTypes.number.isRequired,
+    PropTypes.string.isRequired,
+  ]),
+  showFacepile: PropTypes.bool,
+  hideCTA: PropTypes.bool,
+  smallHeader: PropTypes.bool,
+  adaptContainerWidth: PropTypes.bool,
+  children: PropTypes.node,
+  onParse: PropTypes.func,
+};
+
+Page.defaultProps = {
+  width: 340,
+  height: 500,
+  tabs: 'timeline',
+  hideCover: false,
+  showFacepile: true,
+  hideCTA: false,
+  smallHeader: false,
+  adaptContainerWidth: true,
+  children: undefined,
+  className: undefined,
+  onParse: undefined,
+};
