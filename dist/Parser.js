@@ -1,80 +1,107 @@
 'use strict';
 
-exports.__esModule = true;
-exports.default = undefined;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _class, _temp;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _canUseDom = require('can-use-dom');
+var _propTypes = require('prop-types');
 
-var _canUseDom2 = _interopRequireDefault(_canUseDom);
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _FacebookProvider = require('./FacebookProvider');
+var _InitFacebook = require('./InitFacebook');
 
-var _FacebookProvider2 = _interopRequireDefault(_FacebookProvider);
+var _InitFacebook2 = _interopRequireDefault(_InitFacebook);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+class Parser extends _react.Component {
+  constructor(...args) {
+    var _temp;
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
-
-var Parser = (_temp = _class = function (_Component) {
-  _inherits(Parser, _Component);
-
-  function Parser() {
-    _classCallCheck(this, Parser);
-
-    return _possibleConstructorReturn(this, _Component.apply(this, arguments));
+    return _temp = super(...args), this.handleFacebookReady = facebook => {
+      this.facebook = facebook;
+      this.parse();
+    }, this.handleContainer = container => {
+      this.container = container;
+      this.parse();
+    }, _temp;
   }
 
-  Parser.prototype.componentDidMount = function componentDidMount() {
-    var _this2 = this;
+  shouldComponentUpdate() {
+    return false;
+  }
 
-    if (!_canUseDom2.default) {
+  componentWillReceiveProps(props) {
+    const oldChildren = this.props.children;
+    const { children } = props;
+
+    if (!children || !oldChildren) {
       return;
     }
 
-    this.context.facebook.whenReady(function (err, facebook) {
-      if (err) {
-        return;
-      }
+    const changed = Object.keys(oldChildren.props).find(propName => {
+      const oldValue = oldChildren.props[propName];
+      const newValue = children.props[propName];
 
-      facebook.parse(_this2.container, function () {});
+      return oldValue !== newValue;
     });
-  };
 
-  Parser.prototype.shouldComponentUpdate = function shouldComponentUpdate() {
-    return false;
-  };
+    if (changed) {
+      this.rerender();
+    }
+  }
 
-  Parser.prototype.render = function render() {
-    var _this3 = this;
+  rerender() {
+    this.forceUpdate();
 
-    var className = this.props.className;
+    this.parsed = false;
+    this.parse();
+  }
 
+  parse() {
+    const { parsed, container, facebook } = this;
+    if (parsed || !container || !facebook) {
+      return false;
+    }
+
+    this.parsed = true;
+
+    const parseResponse = facebook.parse(container);
+
+    const { onParse } = this.props;
+    if (onParse) {
+      onParse(parseResponse);
+    }
+
+    return parseResponse;
+  }
+
+  render() {
+    const { className, children } = this.props;
 
     return _react2.default.createElement(
-      'div',
-      { className: className, ref: function ref(c) {
-          _this3.container = c;
-        } },
-      this.renderComponent()
+      _InitFacebook2.default,
+      { onReady: this.handleFacebookReady },
+      _react2.default.createElement(
+        'div',
+        { className: className, ref: this.handleContainer },
+        children
+      )
     );
-  };
-
-  return Parser;
-}(_react.Component), _class.propTypes = {
-  className: _react.PropTypes.string
-}, _class.contextTypes = _extends({}, _FacebookProvider2.default.childContextTypes), _temp);
+  }
+}
 exports.default = Parser;
+Parser.propTypes = {
+  className: _propTypes2.default.string,
+  children: _propTypes2.default.node.isRequired,
+  onParse: _propTypes2.default.func
+};
+Parser.defaultProps = {
+  className: undefined,
+  onParse: undefined
+};
+//# sourceMappingURL=Parser.js.map

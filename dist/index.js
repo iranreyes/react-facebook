@@ -1,11 +1,21 @@
 'use strict';
 
-exports.__esModule = true;
-exports.CommentsOrderBy = exports.LikeAction = exports.ColorScheme = exports.LikeLayout = exports.LikeSize = exports.Feed = exports.CommentsCount = exports.Comments = exports.EmbeddedPost = exports.Send = exports.LoginButton = exports.Login = exports.Page = exports.ShareButton = exports.Share = exports.Like = exports.default = undefined;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.MessengerColor = exports.MessengerSize = exports.CommentsOrderBy = exports.LikeAction = exports.ColorScheme = exports.LikeLayout = exports.LikeSize = exports.SendToMessenger = exports.MessengerCheckbox = exports.MessageUs = exports.CustomChat = exports.Feed = exports.CommentsCount = exports.Comments = exports.EmbeddedPost = exports.Send = exports.LoginButton = exports.Login = exports.Page = exports.ShareButton = exports.Share = exports.Like = exports.InitFacebook = exports.Parser = exports.FacebookProvider = exports.default = undefined;
 
-var _FacebookProvider = require('./FacebookProvider');
+var _FacebookProvider2 = require('./FacebookProvider');
 
-var _FacebookProvider2 = _interopRequireDefault(_FacebookProvider);
+var _FacebookProvider3 = _interopRequireDefault(_FacebookProvider2);
+
+var _Parser2 = require('./Parser');
+
+var _Parser3 = _interopRequireDefault(_Parser2);
+
+var _InitFacebook2 = require('./InitFacebook');
+
+var _InitFacebook3 = _interopRequireDefault(_InitFacebook2);
 
 var _Like2 = require('./Like');
 
@@ -51,6 +61,22 @@ var _Feed2 = require('./Feed');
 
 var _Feed3 = _interopRequireDefault(_Feed2);
 
+var _CustomChat2 = require('./CustomChat');
+
+var _CustomChat3 = _interopRequireDefault(_CustomChat2);
+
+var _MessageUs2 = require('./MessageUs');
+
+var _MessageUs3 = _interopRequireDefault(_MessageUs2);
+
+var _MessengerCheckbox2 = require('./MessengerCheckbox');
+
+var _MessengerCheckbox3 = _interopRequireDefault(_MessengerCheckbox2);
+
+var _SendToMessenger2 = require('./SendToMessenger');
+
+var _SendToMessenger3 = _interopRequireDefault(_SendToMessenger2);
+
 var _LikeSize2 = require('./constants/LikeSize');
 
 var _LikeSize3 = _interopRequireDefault(_LikeSize2);
@@ -71,9 +97,20 @@ var _CommentsOrderBy2 = require('./constants/CommentsOrderBy');
 
 var _CommentsOrderBy3 = _interopRequireDefault(_CommentsOrderBy2);
 
+var _MessengerSize2 = require('./constants/MessengerSize');
+
+var _MessengerSize3 = _interopRequireDefault(_MessengerSize2);
+
+var _MessengerColor2 = require('./constants/MessengerColor');
+
+var _MessengerColor3 = _interopRequireDefault(_MessengerColor2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _FacebookProvider2.default;
+exports.default = _FacebookProvider3.default;
+exports.FacebookProvider = _FacebookProvider3.default;
+exports.Parser = _Parser3.default;
+exports.InitFacebook = _InitFacebook3.default;
 exports.Like = _Like3.default;
 exports.Share = _Share3.default;
 exports.ShareButton = _ShareButton3.default;
@@ -85,8 +122,15 @@ exports.EmbeddedPost = _EmbeddedPost3.default;
 exports.Comments = _Comments3.default;
 exports.CommentsCount = _CommentsCount3.default;
 exports.Feed = _Feed3.default;
+exports.CustomChat = _CustomChat3.default;
+exports.MessageUs = _MessageUs3.default;
+exports.MessengerCheckbox = _MessengerCheckbox3.default;
+exports.SendToMessenger = _SendToMessenger3.default;
 exports.LikeSize = _LikeSize3.default;
 exports.LikeLayout = _LikeLayout3.default;
 exports.ColorScheme = _ColorScheme3.default;
 exports.LikeAction = _LikeAction3.default;
 exports.CommentsOrderBy = _CommentsOrderBy3.default;
+exports.MessengerSize = _MessengerSize3.default;
+exports.MessengerColor = _MessengerColor3.default;
+//# sourceMappingURL=index.js.map

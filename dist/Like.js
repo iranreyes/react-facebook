@@ -1,19 +1,21 @@
 'use strict';
 
-exports.__esModule = true;
-exports.default = undefined;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _class, _temp;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Like;
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Parser2 = require('./Parser');
+var _propTypes = require('prop-types');
 
-var _Parser3 = _interopRequireDefault(_Parser2);
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _Parser = require('./Parser');
+
+var _Parser2 = _interopRequireDefault(_Parser);
 
 var _getCurrentHref = require('./utils/getCurrentHref');
 
@@ -37,40 +39,27 @@ var _LikeAction2 = _interopRequireDefault(_LikeAction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+function Like(props) {
+  const {
+    className,
+    href = (0, _getCurrentHref2.default)(),
+    layout,
+    colorScheme,
+    action,
+    showFaces,
+    share,
+    children,
+    width,
+    size,
+    kidDirectedSite,
+    referral,
+    onParse
+  } = props;
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
-
-var Like = (_temp = _class = function (_Parser) {
-  _inherits(Like, _Parser);
-
-  function Like() {
-    _classCallCheck(this, Like);
-
-    return _possibleConstructorReturn(this, _Parser.apply(this, arguments));
-  }
-
-  Like.prototype.renderComponent = function renderComponent() {
-    var _props = this.props,
-        _props$href = _props.href,
-        href = _props$href === undefined ? (0, _getCurrentHref2.default)() : _props$href,
-        layout = _props.layout,
-        colorScheme = _props.colorScheme,
-        action = _props.action,
-        showFaces = _props.showFaces,
-        share = _props.share,
-        children = _props.children,
-        width = _props.width,
-        size = _props.size,
-        kidDirectedSite = _props.kidDirectedSite,
-        referral = _props.referral;
-
-
-    return _react2.default.createElement(
+  return _react2.default.createElement(
+    _Parser2.default,
+    { className: className, onParse: onParse },
+    _react2.default.createElement(
       'div',
       {
         className: 'fb-like',
@@ -86,29 +75,39 @@ var Like = (_temp = _class = function (_Parser) {
         'data-kid-directed-site': kidDirectedSite
       },
       children
-    );
-  };
+    )
+  );
+}
 
-  return Like;
-}(_Parser3.default), _class.propTypes = _extends({}, _Parser3.default.propTypes, {
-  referral: _react.PropTypes.string,
-  href: _react.PropTypes.string,
-  layout: _react.PropTypes.string.isRequired,
-  showFaces: _react.PropTypes.bool.isRequired,
-  colorScheme: _react.PropTypes.string.isRequired,
-  action: _react.PropTypes.string.isRequired,
-  share: _react.PropTypes.bool.isRequired,
-  children: _react.PropTypes.node,
-  width: _react.PropTypes.oneOfType([_react.PropTypes.number.isRequired, _react.PropTypes.string.isRequired]),
-  size: _react.PropTypes.string,
-  kidDirectedSite: _react.PropTypes.bool.isRequired
-}), _class.defaultProps = {
+Like.propTypes = {
+  className: _propTypes2.default.string,
+  referral: _propTypes2.default.string,
+  href: _propTypes2.default.string,
+  layout: _propTypes2.default.string.isRequired,
+  showFaces: _propTypes2.default.bool.isRequired,
+  colorScheme: _propTypes2.default.string.isRequired,
+  action: _propTypes2.default.string.isRequired,
+  share: _propTypes2.default.bool.isRequired,
+  children: _propTypes2.default.node,
+  width: _propTypes2.default.oneOfType([_propTypes2.default.number.isRequired, _propTypes2.default.string.isRequired]),
+  size: _propTypes2.default.string,
+  kidDirectedSite: _propTypes2.default.bool.isRequired,
+  onParse: _propTypes2.default.func
+};
+
+Like.defaultProps = {
   layout: _LikeLayout2.default.STANDARD,
   showFaces: false,
   colorScheme: _ColorScheme2.default.LIGHT,
   action: _LikeAction2.default.LIKE,
   share: false,
   size: _LikeSize2.default.SMALL,
-  kidDirectedSite: false
-}, _temp);
-exports.default = Like;
+  kidDirectedSite: false,
+  children: undefined,
+  className: undefined,
+  href: undefined,
+  referral: undefined,
+  width: undefined,
+  onParse: undefined
+};
+//# sourceMappingURL=Like.js.map

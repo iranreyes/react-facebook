@@ -1,7 +1,10 @@
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.default = {
   SMALL: 'small',
   LARGE: 'large'
 };
+//# sourceMappingURL=LikeSize.js.map

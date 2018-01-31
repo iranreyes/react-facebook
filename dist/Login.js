@@ -1,158 +1,75 @@
 'use strict';
 
-exports.__esModule = true;
-exports.default = undefined;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends2 = require('babel-runtime/helpers/extends');
 
-var _class, _temp;
+var _extends3 = _interopRequireDefault(_extends2);
 
-var _react = require('react');
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
 
-var _react2 = _interopRequireDefault(_react);
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-var _Facebook = require('./Facebook');
+var _propTypes = require('prop-types');
 
-var _FacebookProvider = require('./FacebookProvider');
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _FacebookProvider2 = _interopRequireDefault(_FacebookProvider);
+var _Process = require('./Process');
+
+var _Process2 = _interopRequireDefault(_Process);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+class Login extends _Process2.default {
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  process(facebook) {
+    var _this = this;
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
-
-var Login = (_temp = _class = function (_Component) {
-  _inherits(Login, _Component);
-
-  function Login(props, context) {
-    _classCallCheck(this, Login);
-
-    var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
-
-    _this.onReady = function (err, facebook) {
-      if (err) {
-        _this.props.onResponse(err);
-        return;
-      }
-
-      _this.setState({ facebook: facebook });
-
-      if (_this.props.onReady) {
-        _this.props.onReady();
-      }
-    };
-
-    _this.onClick = function (evn) {
-      evn.stopPropagation();
-      evn.preventDefault();
-
-      var isWorking = _this.isWorking();
-      if (isWorking) {
-        return;
-      }
-
-      _this.setWorking(true);
-
-      var _this$props = _this.props,
-          scope = _this$props.scope,
-          fields = _this$props.fields,
-          onResponse = _this$props.onResponse,
-          returnScopes = _this$props.returnScopes,
-          rerequest = _this$props.rerequest;
-
-      var facebook = _this.state.facebook;
-      var loginQpts = { scope: scope };
+    return (0, _asyncToGenerator3.default)(function* () {
+      const { scope, fields, returnScopes, rerequest, reauthorize } = _this.props;
+      const loginQpts = { scope };
+      const authType = [];
 
       if (returnScopes) {
         loginQpts.return_scopes = true;
       }
 
       if (rerequest) {
-        loginQpts.auth_type = 'rerequest';
+        authType.push('rerequest');
       }
 
-      facebook.login(loginQpts, function (err, loginStatus) {
-        if (err) {
-          _this.setWorking(false);
-          onResponse(err);
-          return;
-        }
+      if (reauthorize) {
+        authType.push('reauthenticate');
+      }
 
-        if (loginStatus !== _Facebook.LoginStatus.AUTHORIZED) {
-          _this.setWorking(false);
-          onResponse(new Error('Unauthorized user'));
-          return;
-        }
+      if (authType.length) {
+        loginQpts.auth_type = authType.join(',');
+      }
 
-        facebook.getTokenDetailWithProfile({ fields: fields }, function (err2, data) {
-          _this.setWorking(false);
+      const response = yield facebook.login(loginQpts);
+      if (response.status !== 'connected') {
+        throw new Error('Unauthorized user');
+      }
 
-          if (err2) {
-            onResponse(err2);
-            return;
-          }
-
-          onResponse(null, data);
-        });
-      });
-    };
-
-    _this.state = {};
-    return _this;
+      return facebook.getTokenDetailWithProfile({ fields });
+    })();
   }
-
-  Login.prototype.componentDidMount = function componentDidMount() {
-    this.context.facebook.whenReady(this.onReady);
-  };
-
-  Login.prototype.componentWillUnmount = function componentWillUnmount() {
-    this.context.facebook.dismiss(this.onReady);
-  };
-
-  Login.prototype.setWorking = function setWorking(working) {
-    this.setState({ working: working });
-
-    if (this.props.onWorking) {
-      this.props.onWorking(working);
-    }
-  };
-
-  Login.prototype.isWorking = function isWorking() {
-    var _state = this.state,
-        working = _state.working,
-        facebook = _state.facebook;
-
-
-    return working || !facebook;
-  };
-
-  Login.prototype.render = function render() {
-    var children = this.props.children;
-
-
-    return (0, _react.cloneElement)(children, { onClick: this.onClick });
-  };
-
-  return Login;
-}(_react.Component), _class.propTypes = {
-  scope: _react.PropTypes.string.isRequired,
-  fields: _react.PropTypes.array.isRequired,
-  onResponse: _react.PropTypes.func.isRequired,
-  onReady: _react.PropTypes.func,
-  onWorking: _react.PropTypes.func,
-  children: _react.PropTypes.node.isRequired,
-  returnScopes: _react.PropTypes.bool,
-  rerequest: _react.PropTypes.bool
-}, _class.contextTypes = _extends({}, _FacebookProvider2.default.childContextTypes), _class.defaultProps = {
+}
+exports.default = Login;
+Login.propTypes = (0, _extends3.default)({}, _Process2.default.propTypes, {
+  scope: _propTypes2.default.string.isRequired,
+  fields: _propTypes2.default.arrayOf(_propTypes2.default.string),
+  returnScopes: _propTypes2.default.bool,
+  rerequest: _propTypes2.default.bool,
+  reauthorize: _propTypes2.default.bool
+});
+Login.defaultProps = (0, _extends3.default)({}, _Process2.default.defaultProps, {
   scope: '',
   fields: ['id', 'first_name', 'last_name', 'middle_name', 'name', 'email', 'locale', 'gender', 'timezone', 'verified', 'link'],
   returnScopes: false,
-  rerequest: false
-}, _temp);
-exports.default = Login;
+  rerequest: false,
+  reauthorize: false
+});
+//# sourceMappingURL=Login.js.map
